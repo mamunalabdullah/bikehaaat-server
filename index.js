@@ -23,7 +23,7 @@ async function run() {
       const inventoryCollection = client.db("bikeHaaat").collection("inventory");
 
       // read all data ///////////////////
-      app.get('/inventory', async(req, res) => {
+      app.get('/inventories', async(req, res) => {
         const query = {};
         const cursor = inventoryCollection.find(query);
         const inventories = await cursor.toArray();
@@ -31,7 +31,7 @@ async function run() {
       })
 
       // read one data //////////////////////////////
-      app.get('/inventory/:id', async(req, res) => {
+      app.get('/inventories/:id', async(req, res) => {
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
         const inventory = await inventoryCollection.findOne(query);
@@ -40,10 +40,8 @@ async function run() {
 
       // create data /////////////////////////////////////
       app.post('/inventoryAdd', async (req, res) => {
-
-        const data = req.body;
-
-        const result = await inventoryCollection.insertOne(data);
+        const newInventory = req.body;
+        const result = await inventoryCollection.insertOne(newInventory);
         res.send(result);
         console.log("inventory add success");
     })
