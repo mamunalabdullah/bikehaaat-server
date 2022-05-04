@@ -22,6 +22,7 @@ async function run() {
       await client.connect();
       const inventoryCollection = client.db("bikeHaaat").collection("inventory");
 
+      // read all data ///////////////////
       app.get('/inventory', async(req, res) => {
         const query = {};
         const cursor = inventoryCollection.find(query);
@@ -29,12 +30,23 @@ async function run() {
         res.send(inventories);
       })
 
+      // read one data //////////////////////////////
       app.get('/inventory/:id', async(req, res) => {
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
         const inventory = await inventoryCollection.findOne(query);
         res.send(inventory);
       })
+
+      // create data /////////////////////////////////////
+      app.post('/inventoryAdd', async (req, res) => {
+
+        const data = req.body;
+
+        const result = await inventoryCollection.insertOne(data);
+        res.send(result);
+        console.log("inventory add success");
+    })
        
     }
     finally {
