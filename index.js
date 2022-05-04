@@ -31,7 +31,7 @@ async function run() {
       })
 
       // read one data //////////////////////////////
-      app.get('/inventories/:id', async(req, res) => {
+      app.get('/inventory/:id', async(req, res) => {
         const id = req.params.id;
         const query = {_id: ObjectId(id)};
         const inventory = await inventoryCollection.findOne(query);
@@ -45,7 +45,18 @@ async function run() {
         res.send(result);
         console.log("inventory add success");
     })
+
+        // Delete a data
+        // http://localhost:5000/delete/626fc22fce5fae07d57b3131
+        
+        app.delete('/inventory/:id', async(req, res)=>{
+          const id = req.params.id;
+          const query = {_id: ObjectId(id)};
+          const result = await inventoryCollection.deleteOne(query);
+          res.send(result);
+      })
        
+      console.log("Connected to server");
     }
     finally {
     //   await client.close();
