@@ -98,6 +98,21 @@ async function run() {
 
       //////////////////////////////////////////////////////////////////
 
+      // Update a data
+        app.put('/inventory/:id', async (req, res) => {
+          const id = req.params.id;
+          const data = req.body;
+          const filter = { _id: ObjectId(id) };
+          const options = { upsert: true };
+          const updateDoc = {
+              $set: {
+                  ...data,
+              },
+          };
+          const result = await inventoryCollection.updateOne(filter, updateDoc, options);
+          res.send(result);
+      })
+
       // item collection //////////////////////////////////////////
       app.get('/item', verifyJWT, async(req, res) => {
         const decodedEmail = req.decoded.email;
