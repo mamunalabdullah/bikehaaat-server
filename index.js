@@ -13,22 +13,22 @@ app.use(express.json());
 
 //////////////////////////////////////////////
 
-function verifyJWT(req, res, next){
-    const authHeader = req.headers.authorization;
-    if(!authHeader){
-      return res.status(401).send({message: 'Unauthorized access'});
-    }
-    const token = authHeader.split(' ')[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-      if(err){
-        return res.status(403).send({message: 'Forbidden access'});
-      }
-      console.log('decoded', decoded);
-      req.decoded = decoded;
-      next();
-    });
+// function verifyJWT(req, res, next){
+//     const authHeader = req.headers.authorization;
+//     if(!authHeader){
+//       return res.status(401).send({message: 'Unauthorized access'});
+//     }
+//     const token = authHeader.split(' ')[1];
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+//       if(err){
+//         return res.status(403).send({message: 'Forbidden access'});
+//       }
+//       console.log('decoded', decoded);
+//       req.decoded = decoded;
+//       next();
+//     });
     
-}
+// }
 
 // MongoDb ///////////////////////////////////////////
 
@@ -50,18 +50,9 @@ async function run() {
 
       // read all data ////////////////////////////////////////////////////
       app.get('/inventories', async(req, res) => {
-        // console.log('query', req.query);
-        // const page = parseInt(req.query.page);
-        // const size = parseInt(req.query.size);
         const query = {};
         const cursor = inventoryCollection.find(query);
-        // let items;
-        // if(page || size){
-        //   items = await cursor.skip(page*size).toArray();
-        // }
-        // else{
-        //   
-        // }
+        
         const inventories = await cursor.toArray();
         res.send(inventories);
       })
@@ -77,16 +68,6 @@ async function run() {
       })
 
       ////////////////////////////////////////////////////////////////////////////
-
-      //pagination ////////////////////////////////////
-      app.get('/inventoryCount', async(req, res) => {
-        const query = {};
-        const cursor = inventoryCollection.find(query);
-        const count = await cursor.count();
-        res.send({count});
-      })
-
-      ///////////////////////////////////////////////////////////////
 
       // create data /////////////////////////////////////
       app.post('/inventoryAdd', async (req, res) => {
@@ -114,18 +95,24 @@ async function run() {
       })
 
       // item collection //////////////////////////////////////////
-      app.get('/item', verifyJWT, async(req, res) => {
-        const decodedEmail = req.decoded.email;
-        const email = req.query.email;
-        if(email === decodedEmail){
-          const query = {email: email};
-          const cursor = itemCollection.find(query);
-          const items = await cursor.toArray();
-          res.send(items);
-        }
-        else{
-          res.status(403).send({message: 'Forbidden access'})
-        }
+      // app.get('/item', verifyJWT, async(req, res) => {
+      //   const decodedEmail = req.decoded.email;
+      //   const email = req.query.email;
+      //   if(email === decodedEmail){
+      //     const query = {email: email};
+      //     const cursor = itemCollection.find(query);
+      //     const items = await cursor.toArray();
+      //     res.send(items);
+      //   }
+      //   else{
+      //     res.status(403).send({message: 'Forbidden access'})
+      //   }
+      // })
+      app.get('/item', async(req, res) => {
+        const query = {};
+        const cursor = itemCollection.find(query);
+        const items = await cursor.toArray();
+        res.send(items);
       })
 
       app.post('/item', async(req, res) => {
