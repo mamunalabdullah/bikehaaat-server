@@ -28,9 +28,12 @@ async function run() {
       // auth ////////////////////////////////
       app.post('/login', async(req, res) => {
         const user = req.body;
-        const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET)
-        res.send({token});
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+          expiresIn: '1d'
+        });
+        res.send({accessToken});
       })
+
 
       // read all data ////////////////////////////////////////////////////
       app.get('/inventories', async(req, res) => {
@@ -81,6 +84,8 @@ async function run() {
       // item collection //////////////////////////////////////////
       
       app.get('/item', async(req, res) => {
+        const authHeader = req.headers.authorization;
+        console.log(authHeader);
         const email = req.query.email;
         const query = {email};
         const cursor = itemCollection.find(query);
